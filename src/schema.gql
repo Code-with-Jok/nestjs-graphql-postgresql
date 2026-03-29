@@ -9,15 +9,34 @@ input CreateUserDto {
   username: String
 }
 
+input LoginDto {
+  email: String!
+  password: String!
+}
+
+type LoginResponse {
+  accessToken: String
+  refreshToken: String
+}
+
 type Mutation {
   createUser(userData: CreateUserDto!): User!
   deleteUser(id: Float!): Boolean!
+  login(userData: LoginDto!): LoginResponse!
+  register(userData: RegisterDto!): User!
   updateUser(dataupdate: UpdateUserDto!, id: Float!): User!
 }
 
 type Query {
   user(id: Float!): User!
   users(filter: UserFilter!): UserPaginationResponse!
+}
+
+input RegisterDto {
+  email: String!
+  password: String!
+  phone: String
+  username: String
 }
 
 input UpdateUserDto {
