@@ -9,6 +9,12 @@ import {
 import { GqlExecutionContext } from '@nestjs/graphql';
 import { JwtService } from '@nestjs/jwt';
 import { UserService } from 'src/user/user.service';
+import { Request } from 'express';
+
+interface JwtPayload {
+  id: number;
+  [key: string]: any;
+}
 
 @Injectable()
 export class AuthGuard implements CanActivate {
@@ -17,29 +23,30 @@ export class AuthGuard implements CanActivate {
     private userService: UserService,
   ) {}
 
-  private extractToken(req: any): string | undefined {
-    const [type, token] = req.headers.authorization
-      ? req.headers.authorization.split(' ')
-      : [];
+  private extractToken(req: Request): string | undefined {
+    const authHeader = req.headers.authorization;
+    if (!authHeader) return undefined;
 
+    const [type, token] = authHeader.split(' ');
     return type === 'Bearer' ? token : undefined;
   }
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const ctx = GqlExecutionContext.create(context);
-    const token = this.extractToken(ctx.getContext().req);
+    const { req } = ctx.getContext<{ req: Request & { user_data?: any } }>();
+    const token = this.extractToken(req);
 
     if (!token) {
       throw new UnauthorizedException();
     }
 
     try {
-      const payload = await this.jwtService.verifyAsync(token, {
+      const payload = await this.jwtService.verifyAsync<JwtPayload>(token, {
         secret: process.env.ACCESS_TOKEN_KEY,
       });
 
       const user = await this.userService.findOne(payload.id);
-      ctx.getContext().req.user_data = user;
+      req.user_data = user;
       return true;
     } catch (error) {
       console.log('err=> ', error);

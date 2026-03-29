@@ -25,7 +25,7 @@ export class CreateUserDto {
 
   @Field(() => String, { nullable: true })
   @IsOptional()
-  @Matches(/^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/)
+  @Matches(/^[+]?[(]?[0-9]{3}[)]?[-\s.]?[0-9]{3}[-\s.]?[0-9]{4,6}$/)
   phone?: string;
 }
 
@@ -49,6 +49,6 @@ export class UpdateUserDto {
 
   @Field(() => String, { nullable: true })
   @IsOptional()
-  @Matches(/^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/)
+  @Matches(/^[+]?[(]?[0-9]{3}[)]?[-\s.]?[0-9]{3}[-\s.]?[0-9]{4,6}$/)
   phone?: string;
 }
