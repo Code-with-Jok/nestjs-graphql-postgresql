@@ -11,11 +11,18 @@ input CreateUserDto {
 
 type Mutation {
   createUser(userData: CreateUserDto!): User!
+  deleteUser(id: Float!): Boolean!
+  updateUser(dataupdate: UpdateUserDto!, id: Float!): User!
 }
 
 type Query {
   user(id: Float!): User!
-  users: [User!]!
+  users(filter: UserFilter!): UserPaginationResponse!
+}
+
+input UpdateUserDto {
+  phone: String
+  username: String
 }
 
 type User {
@@ -24,4 +31,17 @@ type User {
   password: String!
   phone: String
   username: String
+}
+
+input UserFilter {
+  itemsPerPage: Int
+  page: Int
+  search: String
+}
+
+type UserPaginationResponse {
+  currentPage: Int!
+  data: [User!]!
+  itemsPerPage: Int!
+  total: Int!
 }
