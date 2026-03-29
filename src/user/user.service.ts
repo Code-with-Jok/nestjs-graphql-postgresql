@@ -19,8 +19,6 @@ export class UserService {
     const itemsPerPage = Number(filter.itemsPerPage) || 10;
     const page = Number(filter.page) || 1;
 
-    console.log({ search });
-
     const skip = page > 1 ? (page - 1) * itemsPerPage : 0;
     const users = await this.prisma.user.findMany({
       take: itemsPerPage,
