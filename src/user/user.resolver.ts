@@ -1,16 +1,17 @@
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { UserService } from './user.service';
-import { User } from './models/user.model';
-import { CreateUserDto } from './dto/user.dto';
+import { User, UserPaginationResponse } from './models/user.model';
+import { CreateUserDto, UpdateUserDto, UserFilter } from './dto/user.dto';
 
 @Resolver()
 export class UserResolver {
   constructor(private readonly userService: UserService) {}
 
-  @Query(() => [User])
-  async users(): Promise<User[]> {
-    const users = await this.userService.findAll();
-
+  @Query(() => UserPaginationResponse)
+  async users(
+    @Args('filter') filter: UserFilter,
+  ): Promise<UserPaginationResponse> {
+    const users = await this.userService.findAll(filter);
     return users;
   }
 
@@ -23,6 +24,21 @@ export class UserResolver {
   @Mutation(() => User)
   async createUser(@Args('userData') userData: CreateUserDto): Promise<User> {
     const user = await this.userService.create(userData);
+    return user;
+  }
+
+  @Mutation(() => User)
+  async updateUser(
+    @Args('id') id: number,
+    @Args('dataupdate') dataUpdate: UpdateUserDto,
+  ): Promise<User> {
+    const user = await this.userService.update(Number(id), dataUpdate);
+    return user;
+  }
+
+  @Mutation(() => Boolean)
+  async deleteUser(@Args('id') id: number): Promise<boolean> {
+    const user = await this.userService.delete(Number(id));
     return user;
   }
 }
